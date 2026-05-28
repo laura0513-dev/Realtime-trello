@@ -1,0 +1,85 @@
+# Plan de desarrollo — Realtime Trello
+
+## Backend
+
+### ✅ Hecho
+- [x] Arquitectura base (capas: config, middlewares, routes, sockets)
+- [x] Schema Prisma (User, Board, Column con ColumnType enum, Card)
+- [x] Dependencias instaladas (0 vulnerabilidades)
+- [x] TypeScript configurado y validado
+
+### 🔲 Módulo de autenticación
+- [ ] `POST /api/auth/register` — registro con email y contraseña
+- [ ] `POST /api/auth/login` — login, devuelve JWT
+- [ ] `GET  /api/auth/me` — perfil del usuario autenticado
+- [ ] Middleware `authenticate` aplicado a rutas protegidas
+- [ ] Primera migración de Prisma
+
+### 🔲 Módulo de tableros (Boards)
+- [ ] `POST   /api/boards` — crear tablero
+- [ ] `GET    /api/boards` — listar tableros del usuario
+- [ ] `GET    /api/boards/:id` — obtener tablero con columnas y cards
+- [ ] `PATCH  /api/boards/:id` — renombrar tablero
+- [ ] `DELETE /api/boards/:id` — eliminar tablero
+
+### 🔲 Módulo de columnas (Columns)
+- [ ] `POST   /api/boards/:boardId/columns` — crear columna (title, type, color)
+- [ ] `PATCH  /api/columns/:id` — editar columna
+- [ ] `PATCH  /api/columns/:id/position` — reordenar columna
+- [ ] `DELETE /api/columns/:id` — eliminar columna
+
+### 🔲 Módulo de cards
+- [ ] `POST   /api/columns/:columnId/cards` — crear card en columna BACKLOG por defecto
+- [ ] `PATCH  /api/cards/:id` — editar título / descripción
+- [ ] `PATCH  /api/cards/:id/move` — mover card (nueva columna + nueva posición)
+- [ ] `DELETE /api/cards/:id` — eliminar card
+
+### 🔲 WebSockets (tiempo real)
+- [ ] Evento `board:join` / `board:leave` (ya estructurado)
+- [ ] Evento `card:moved` — notificar a todos en el tablero
+- [ ] Evento `card:created` — notificar nueva card
+- [ ] Evento `card:updated` — notificar edición
+- [ ] Evento `card:deleted` — notificar eliminación
+- [ ] Evento `column:created` / `column:updated` / `column:deleted`
+
+---
+
+## Frontend
+
+### 🔲 Setup
+- [ ] Crear app React + TypeScript con Create React App o Vite
+- [ ] Instalar Material UI
+- [ ] Configurar React Router
+- [ ] Configurar cliente HTTP (axios)
+- [ ] Configurar cliente Socket.io
+
+### 🔲 Autenticación
+- [ ] Página de registro
+- [ ] Página de login
+- [ ] Contexto global de usuario (AuthContext)
+- [ ] Rutas protegidas (PrivateRoute)
+
+### 🔲 Tableros
+- [ ] Página de lista de tableros
+- [ ] Crear / eliminar tablero
+
+### 🔲 Kanban
+- [ ] Vista de tablero con columnas y cards
+- [ ] Crear / editar / eliminar columna (con selector de color y tipo)
+- [ ] Crear / editar / eliminar card
+- [ ] Drag & drop de cards entre columnas (react-beautiful-dnd)
+- [ ] Actualizaciones en tiempo real vía Socket.io
+
+---
+
+## Infraestructura
+
+### 🔲 Docker
+- [ ] `Dockerfile` para el backend
+- [ ] `Dockerfile` para el frontend
+- [ ] `docker-compose.yml` con backend + frontend + PostgreSQL
+- [ ] Variables de entorno para producción
+
+### 🔲 GitHub
+- [ ] `.gitignore` global
+- [ ] Commits por módulo terminado

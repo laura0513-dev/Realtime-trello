@@ -1,0 +1,71 @@
+// This is your Prisma schema file
+// Docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Define la semántica de cada columna.
+// BACKLOG  → trabajo pendiente / punto de entrada
+// ACTIVE   → trabajo en curso
+// DONE     → trabajo terminado / punto de salida
+enum ColumnType {
+  BACKLOG
+  ACTIVE
+  DONE
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  boards Board[]
+}
+
+model Board {
+  id        String   @id @default(cuid())
+  title     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  ownerId String
+  owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  columns Column[]
+}
+
+model Column {
+  id        String     @id @default(cuid())
+  title     String
+  position  Int        // orden de la columna dentro del tablero
+  type      ColumnType @default(BACKLOG) // semántica de la columna
+  color     String?    // color hex opcional, ej: "#6366f1"
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  boardId String
+  board   Board  @relation(fields: [boardId], references: [id], onDelete: Cascade)
+
+  cards Card[]
+}
+
+model Card {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  position    Int      // orden de la card dentro de la columna
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  columnId String
+  column   Column @relation(fields: [columnId], references: [id], onDelete: Cascade)
+}
