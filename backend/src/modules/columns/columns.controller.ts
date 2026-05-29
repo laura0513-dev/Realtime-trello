@@ -7,6 +7,7 @@ import {
 } from './columns.schemas';
 import * as columnsService from './columns.service';
 import type { AuthRequest } from '../../middlewares/auth';
+import { getIO } from '../../sockets';
 
 function handleZod(error: unknown, res: Response, next: NextFunction): void {
   if (error instanceof ZodError) {
@@ -23,11 +24,12 @@ export async function createColumn(
 ): Promise<void> {
   try {
     const input = createColumnSchema.parse(req.body);
-    const column = await columnsService.createColumn(
+    const { column, boardId } = await columnsService.createColumn(
       req.params.boardId,
       req.user!.id,
       input,
     );
+    getIO().to(`board:${boardId}`).emit('column:created', column);
     res.status(201).json(column);
   } catch (error) {
     handleZod(error, res, next);
@@ -41,11 +43,12 @@ export async function updateColumn(
 ): Promise<void> {
   try {
     const input = updateColumnSchema.parse(req.body);
-    const column = await columnsService.updateColumn(
+    const { column, boardId } = await columnsService.updateColumn(
       req.params.id,
       req.user!.id,
       input,
     );
+    getIO().to(`board:${boardId}`).emit('column:updated', column);
     res.status(200).json(column);
   } catch (error) {
     handleZod(error, res, next);
@@ -59,11 +62,12 @@ export async function reorderColumn(
 ): Promise<void> {
   try {
     const input = reorderColumnSchema.parse(req.body);
-    const column = await columnsService.reorderColumn(
+    const { column, boardId } = await columnsService.reorderColumn(
       req.params.id,
       req.user!.id,
       input,
     );
+    getIO().to(`board:${boardId}`).emit('column:updated', column);
     res.status(200).json(column);
   } catch (error) {
     handleZod(error, res, next);
@@ -76,7 +80,8 @@ export async function deleteColumn(
   next: NextFunction,
 ): Promise<void> {
   try {
-    await columnsService.deleteColumn(req.params.id, req.user!.id);
+    const { columnId, boardId } = await columnsService.deleteColumn(req.params.id, req.user!.id);
+    getIO().to(`board:${boardId}`).emit('column:deleted', { id: columnId });
     res.status(204).send();
   } catch (error) {
     next(error);

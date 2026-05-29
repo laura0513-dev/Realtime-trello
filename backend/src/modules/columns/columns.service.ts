@@ -36,7 +36,7 @@ export async function createColumn(
   });
   const position = lastColumn ? lastColumn.position + 1 : 0;
 
-  return prisma.column.create({
+  const column = await prisma.column.create({
     data: {
       title:   input.title,
       type:    input.type ?? 'ACTIVE',
@@ -45,6 +45,7 @@ export async function createColumn(
       boardId,
     },
   });
+  return { column, boardId };
 }
 
 export async function updateColumn(
@@ -52,9 +53,9 @@ export async function updateColumn(
   ownerId: string,
   input: UpdateColumnInput,
 ) {
-  await assertColumnOwnership(columnId, ownerId);
+  const existing = await assertColumnOwnership(columnId, ownerId);
 
-  return prisma.column.update({
+  const column = await prisma.column.update({
     where: { id: columnId },
     data: {
       ...(input.title !== undefined && { title: input.title }),
@@ -63,6 +64,7 @@ export async function updateColumn(
       ...(input.color !== undefined && { color: input.color ?? null }),
     },
   });
+  return { column, boardId: existing.boardId };
 }
 
 export async function reorderColumn(
@@ -75,7 +77,7 @@ export async function reorderColumn(
   const { boardId, position: oldPosition } = column;
   const newPosition = input.position;
 
-  if (oldPosition === newPosition) return column;
+  if (oldPosition === newPosition) return { column, boardId };
 
   // Desplazamos las columnas afectadas para hacer hueco a la nueva posición.
   // Si la columna sube (newPosition < oldPosition), las columnas intermedias bajan.
@@ -98,14 +100,16 @@ export async function reorderColumn(
     });
   }
 
-  return prisma.column.update({
+  const updated = await prisma.column.update({
     where: { id: columnId },
     data:  { position: newPosition },
   });
+  return { column: updated, boardId };
 }
 
 export async function deleteColumn(columnId: string, ownerId: string) {
   const column = await assertColumnOwnership(columnId, ownerId);
+  const boardId = column.boardId;
 
   await prisma.column.delete({ where: { id: columnId } });
 
@@ -117,4 +121,6 @@ export async function deleteColumn(columnId: string, ownerId: string) {
     },
     data: { position: { decrement: 1 } },
   });
+
+  return { columnId, boardId };
 }

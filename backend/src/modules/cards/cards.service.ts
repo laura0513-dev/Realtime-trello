@@ -29,7 +29,7 @@ export async function createCard(
   ownerId: string,
   input: CreateCardInput,
 ) {
-  await assertColumnOwnership(columnId, ownerId);
+  const column = await assertColumnOwnership(columnId, ownerId);
 
   // La card nueva va al final de la columna
   const lastCard = await prisma.card.findFirst({
@@ -38,7 +38,7 @@ export async function createCard(
   });
   const position = lastCard ? lastCard.position + 1 : 0;
 
-  return prisma.card.create({
+  const card = await prisma.card.create({
     data: {
       title:       input.title,
       description: input.description ?? null,
@@ -46,6 +46,7 @@ export async function createCard(
       columnId,
     },
   });
+  return { card, boardId: column.boardId };
 }
 
 export async function updateCard(
@@ -53,9 +54,9 @@ export async function updateCard(
   ownerId: string,
   input: UpdateCardInput,
 ) {
-  await assertCardOwnership(cardId, ownerId);
+  const existing = await assertCardOwnership(cardId, ownerId);
 
-  return prisma.card.update({
+  const card = await prisma.card.update({
     where: { id: cardId },
     data: {
       ...(input.title       !== undefined && { title:       input.title }),
@@ -63,6 +64,7 @@ export async function updateCard(
       ...(input.description !== undefined && { description: input.description }),
     },
   });
+  return { card, boardId: existing.column.boardId };
 }
 
 export async function moveCard(
@@ -83,7 +85,7 @@ export async function moveCard(
 
   // --- Caso 1: movimiento dentro de la misma columna ---
   if (sameColumn) {
-    if (oldPosition === newPosition) return card;
+    if (oldPosition === newPosition) return { card, boardId: card.column.boardId };
 
     if (newPosition < oldPosition) {
       await prisma.card.updateMany({
@@ -97,10 +99,11 @@ export async function moveCard(
       });
     }
 
-    return prisma.card.update({
+    const moved = await prisma.card.update({
       where: { id: cardId },
       data:  { position: newPosition },
     });
+    return { card: moved, boardId: card.column.boardId };
   }
 
   // --- Caso 2: movimiento entre columnas distintas ---
@@ -117,14 +120,16 @@ export async function moveCard(
   });
 
   // 3. Movemos la card
-  return prisma.card.update({
+  const moved = await prisma.card.update({
     where: { id: cardId },
     data:  { columnId: newColumnId, position: newPosition },
   });
+  return { card: moved, boardId: card.column.boardId };
 }
 
 export async function deleteCard(cardId: string, ownerId: string) {
   const card = await assertCardOwnership(cardId, ownerId);
+  const boardId = card.column.boardId;
 
   await prisma.card.delete({ where: { id: cardId } });
 
@@ -133,4 +138,6 @@ export async function deleteCard(cardId: string, ownerId: string) {
     where: { columnId: card.columnId, position: { gt: card.position } },
     data:  { position: { decrement: 1 } },
   });
+
+  return { cardId, boardId };
 }

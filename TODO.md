@@ -35,13 +35,13 @@
 - [x] `PATCH  /api/cards/:id/move` — mover card (nueva columna + nueva posición, reordena origen y destino)
 - [x] `DELETE /api/cards/:id` — eliminar card (reordena las restantes)
 
-### 🔲 WebSockets (tiempo real)
-- [ ] Evento `board:join` / `board:leave` (ya estructurado)
-- [ ] Evento `card:moved` — notificar a todos en el tablero
-- [ ] Evento `card:created` — notificar nueva card
-- [ ] Evento `card:updated` — notificar edición
-- [ ] Evento `card:deleted` — notificar eliminación
-- [ ] Evento `column:created` / `column:updated` / `column:deleted`
+### ✅ WebSockets (tiempo real)
+- [x] Evento `board:join` / `board:leave` — sala por tablero
+- [x] Evento `card:created` — notificar nueva card a todos en el tablero
+- [x] Evento `card:updated` — notificar edición
+- [x] Evento `card:moved` — notificar movimiento (cross-column o reorden)
+- [x] Evento `card:deleted` — notificar eliminación
+- [x] Evento `column:created` / `column:updated` / `column:deleted`
 
 ---
 
