@@ -36,6 +36,9 @@ POST http://localhost:4000/api/auth/login
 # Perfil (requiere token Bearer)
 GET http://localhost:4000/api/auth/me
 ```
+
+# Conceptos:
+Concepto Fail-Fast:
 Viene de la electrónica: proteger el sistema antes de que el daño se propague.
 
 Patrón SINGLETON: Una clase solo puede tener una instancia en toda la aplicación y hay un punto de acceso global a ella. 
