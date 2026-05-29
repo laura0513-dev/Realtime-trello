@@ -23,17 +23,17 @@
 - [x] `PATCH  /api/boards/:id` — renombrar tablero
 - [x] `DELETE /api/boards/:id` — eliminar tablero (cascade a columnas y cards)
 
-### 🔲 Módulo de columnas (Columns)
-- [ ] `POST   /api/boards/:boardId/columns` — crear columna (title, type, color)
-- [ ] `PATCH  /api/columns/:id` — editar columna
-- [ ] `PATCH  /api/columns/:id/position` — reordenar columna
-- [ ] `DELETE /api/columns/:id` — eliminar columna
+### ✅ Módulo de columnas (Columns)
+- [x] `POST   /api/boards/:boardId/columns` — crear columna (title, type, color)
+- [x] `PATCH  /api/columns/:id` — editar columna
+- [x] `PATCH  /api/columns/:id/position` — reordenar (desplaza las demás automáticamente)
+- [x] `DELETE /api/columns/:id` — eliminar (reordena las restantes)
 
-### 🔲 Módulo de cards
-- [ ] `POST   /api/columns/:columnId/cards` — crear card en columna BACKLOG por defecto
-- [ ] `PATCH  /api/cards/:id` — editar título / descripción
-- [ ] `PATCH  /api/cards/:id/move` — mover card (nueva columna + nueva posición)
-- [ ] `DELETE /api/cards/:id` — eliminar card
+### ✅ Módulo de cards
+- [x] `POST   /api/columns/:columnId/cards` — crear card en columna
+- [x] `PATCH  /api/cards/:id` — editar título / descripción
+- [x] `PATCH  /api/cards/:id/move` — mover card (nueva columna + nueva posición, reordena origen y destino)
+- [x] `DELETE /api/cards/:id` — eliminar card (reordena las restantes)
 
 ### 🔲 WebSockets (tiempo real)
 - [ ] Evento `board:join` / `board:leave` (ya estructurado)

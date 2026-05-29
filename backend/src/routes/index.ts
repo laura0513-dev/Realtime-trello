@@ -1,7 +1,8 @@
 import { Router } from 'express';
-import { authRouter } from '../modules/auth/auth.routes';
-import { boardsRouter } from '../modules/boards/boards.routes';
+import { authRouter }    from '../modules/auth/auth.routes';
+import { boardsRouter }  from '../modules/boards/boards.routes';
 import { columnsRouter } from '../modules/columns/columns.routes';
+import { cardsRouter }   from '../modules/cards/cards.routes';
 
 // Router raíz que agrupa todas las rutas de la API.
 // Cada módulo (auth, boards, columns, cards) tendrá su propio archivo
@@ -18,6 +19,5 @@ router.use('/auth',                        authRouter);
 router.use('/boards',                      boardsRouter);
 router.use('/boards/:boardId/columns',     columnsRouter);  // POST crear columna
 router.use('/columns',                     columnsRouter);  // PATCH/DELETE columna
-
-// Las rutas de cada módulo se irán añadiendo aquí:
-// router.use('/cards', cardRoutes);
+router.use('/columns/:columnId/cards',     cardsRouter);    // POST crear card
+router.use('/cards',                       cardsRouter);    // PATCH/DELETE card
