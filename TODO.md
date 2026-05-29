@@ -4,23 +4,24 @@
 
 ### ✅ Hecho
 - [x] Arquitectura base (capas: config, middlewares, routes, sockets)
-- [x] Schema Prisma (User, Board, Column con ColumnType enum, Card)
-- [x] Dependencias instaladas (0 vulnerabilidades)
+- [x] Schema Prisma (User, Board, Column con ColumnType enum + color, Card)
+- [x] Dependencias instaladas (0 vulnerabilidades, bcryptjs en lugar de bcrypt)
 - [x] TypeScript configurado y validado
+- [x] Primera migración de Prisma aplicada (`kanban_app`)
 
-### 🔲 Módulo de autenticación
-- [ ] `POST /api/auth/register` — registro con email y contraseña
-- [ ] `POST /api/auth/login` — login, devuelve JWT
-- [ ] `GET  /api/auth/me` — perfil del usuario autenticado
-- [ ] Middleware `authenticate` aplicado a rutas protegidas
-- [ ] Primera migración de Prisma
+### ✅ Módulo de autenticación
+- [x] `POST /api/auth/register` — registro con email y contraseña (hash bcryptjs)
+- [x] `POST /api/auth/login` — login, devuelve JWT
+- [x] `GET  /api/auth/me` — perfil del usuario autenticado
+- [x] Middleware `authenticate` — verificación JWT en rutas protegidas
+- [x] Validación de entrada con Zod (schemas)
 
-### 🔲 Módulo de tableros (Boards)
-- [ ] `POST   /api/boards` — crear tablero
-- [ ] `GET    /api/boards` — listar tableros del usuario
-- [ ] `GET    /api/boards/:id` — obtener tablero con columnas y cards
-- [ ] `PATCH  /api/boards/:id` — renombrar tablero
-- [ ] `DELETE /api/boards/:id` — eliminar tablero
+### ✅ Módulo de tableros (Boards)
+- [x] `POST   /api/boards` — crear tablero + 3 columnas por defecto automáticas
+- [x] `GET    /api/boards` — listar tableros del usuario (con conteo de columnas)
+- [x] `GET    /api/boards/:id` — obtener tablero completo con columnas y cards
+- [x] `PATCH  /api/boards/:id` — renombrar tablero
+- [x] `DELETE /api/boards/:id` — eliminar tablero (cascade a columnas y cards)
 
 ### 🔲 Módulo de columnas (Columns)
 - [ ] `POST   /api/boards/:boardId/columns` — crear columna (title, type, color)
