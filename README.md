@@ -37,6 +37,46 @@ POST http://localhost:4000/api/auth/login
 GET http://localhost:4000/api/auth/me
 ```
 
+## Testing
+
+El backend tiene **29 tests unitarios** cubriendo auth, boards, columns, cards y eventos WebSocket.
+
+### Por qué Vitest en lugar de Jest
+
+| Criterio | Vitest | Jest |
+|---|---|---|
+| **TypeScript** | Nativo, sin configuración adicional | Requiere `ts-jest` o `babel-jest` |
+| **Velocidad** | 2-10x más rápido (usa esbuild internamente) | Más lento en proyectos TypeScript |
+| **API** | 100% compatible con Jest (`describe`, `it`, `expect`) | — |
+| **ESM** | Soporte nativo | Requiere transformadores adicionales |
+| **Integración** | Mismo ecosistema que Vite (frontend) | Ecosistema separado |
+
+En resumen: misma API de Jest, menos configuración y mayor velocidad. Para un stack moderno TypeScript + Vite, Vitest es la elección natural.
+
+### Ejecutar los tests
+
+```bash
+cd backend
+
+# Ejecutar todos los tests una vez
+npm test
+
+# Modo watch (re-ejecuta al guardar)
+npm run test:watch
+
+# Con reporte de cobertura
+npm run test:coverage
+```
+
+### Cobertura
+
+- `auth.service.ts` — registro, login, getMe (happy path + errores)
+- `authenticate` middleware — token ausente, inválido y válido
+- `boards.service.ts` — crear tablero, listar, acceso denegado
+- `columns.service.ts` — crear, reordenar (arriba/abajo), eliminar, autorización
+- `cards.service.ts` — crear, mover (misma columna / columna cruzada), eliminar, autorización
+- `cards.controller.ts` — emisión de eventos WebSocket (`card:created`, `card:moved`, aislamiento de sala)
+
 # Conceptos:
 Concepto Fail-Fast:
 Viene de la electrónica: proteger el sistema antes de que el daño se propague.
